@@ -1,41 +1,41 @@
 @org.springframework.web.bind.annotation.RestController()
 @org.springframework.web.bind.annotation.RequestMapping("/api/book")
+@RestController
+@RequestMapping("/api/book")
 public class BookController {
 
+    private final BookService bookService;
+
+    public BookController(BookService bookService) {
+        this.bookService = bookService;
+    }
+
+    @GetMapping
     public ResponseEntity<List<Book>> getAllBooks() {
-        bookService.findAll();
-        ResponseEntity.ok(books);
+        List<Book> books = bookService.findAll();
+        return ResponseEntity.ok(books);
     }
 
-    public ResponseEntity<Book> getBookById() {
-        bookService.findById(id);
-        book.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
-        book.map(ResponseEntity::ok);
-        ResponseEntity.notFound();
-        ResponseEntity.notFound().build();
+    @GetMapping("/{id}")
+    public ResponseEntity<Book> getBookById(@PathVariable("id") Long id) {
+        return bookService.findById(id).map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    public ResponseEntity<Book> createBook() {
-        bookService.save(book);
-        ResponseEntity.ok(savedBook);
+    @PostMapping
+    public ResponseEntity<Book> createBook(@RequestBody Book book) {
+        Book created = bookService.save(book);
+        return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
 
-    public ResponseEntity<Book> updateBook() {
-        bookService.findById(id);
-        existing.isEmpty();
-        ResponseEntity.notFound().build();
-        ResponseEntity.notFound();
-        book.setId(id);
-        bookService.save(book);
-        ResponseEntity.ok(updatedBook);
+    @PutMapping("/{id}")
+    public ResponseEntity<Book> updateBook(@PathVariable("id") Long id, @RequestBody Book book) {
+        Book updated = bookService.update(id, book);
+        return ResponseEntity.ok(updated);
     }
 
-    public ResponseEntity<Void> deleteBook() {
-        bookService.existsById(id);
-        ResponseEntity.notFound();
-        ResponseEntity.notFound().build();
-        bookService.deleteById(id);
-        ResponseEntity.noContent().build();
-        ResponseEntity.noContent();
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteBook(@PathVariable("id") Long id) {
+        bookService.delete(id);
+        return ResponseEntity.noContent().build();
     }
 }
